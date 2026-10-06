@@ -17,32 +17,42 @@ export class CandidatesPage {
     .filter({ hasText: "Vacancy" })
     .locator(".oxd-select-text");
 
+  private readonly methodApplicationSelect = this.page
+    .locator(".oxd-input-group")
+    .filter({ hasText: "Method of Application" })
+    .locator(".oxd-select-text");
+
   private readonly searchButton = this.page.getByRole("button", {
     name: "Search",
   });
 
   private readonly resultsTable = this.page.locator(".oxd-table");
 
-  // Acessa a tela de Candidates
   async acessar(): Promise<void> {
     await this.recruitmentMenu.click();
     await this.candidatesMenu.click();
   }
 
-  // Seleciona uma vaga
-  async selecionarVacancy(vacancy: string): Promise<void> {
-    await this.vacancySelect.click();
-    await this.page.getByText(vacancy, { exact: true }).click();
+ async selecionarVacancy(vacancy: string): Promise<void> {
+  await this.vacancySelect.click();
+
+  const option = this.page
+    .locator(".oxd-select-dropdown")
+    .getByText(vacancy, { exact: true });
+
+  await option.click();
+}
+
+  async selecionarMethodOfApplication(method: string): Promise<void> {
+    await this.methodApplicationSelect.click();
+    await this.page.getByText(method, { exact: true }).click();
   }
 
-  // Executa a pesquisa
   async pesquisar(): Promise<void> {
     await this.searchButton.click();
   }
 
-  // Valida se a tabela de resultados foi carregada
   async validarResultados(): Promise<void> {
     await expect(this.resultsTable).toBeVisible();
   }
 }
-
